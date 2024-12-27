@@ -56,7 +56,7 @@
 #if defined(__APPLE__)
 #define HAVE_VDSP 1
 #else
-#define USE_BUILTIN_FFT 1
+// #define USE_BUILTIN_FFT 1
 #endif
 
 #endif

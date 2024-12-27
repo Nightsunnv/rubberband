@@ -71,7 +71,7 @@ public:
 
     void setFormantOption(RubberBandLiveShifter::Options);
 
-    size_t getBlockSize() const;
+    constexpr size_t getBlockSize() const;
     void shift(const float *const *input, float *const *output);
 
     size_t getPreferredStartPad() const;
@@ -403,7 +403,7 @@ protected:
         }
     }
     
-    int getWindowSourceSize() const {
+    __attribute__((noinline)) int getWindowSourceSize() const {
         if (m_useReadahead) {
             int sz = m_guideConfiguration.classificationFftSize +
                 m_limits.maxInhopWithReadahead;

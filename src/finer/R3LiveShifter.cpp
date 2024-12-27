@@ -317,7 +317,7 @@ R3LiveShifter::reset()
     measureResamplerDelay();
 }
 
-size_t
+constexpr size_t
 R3LiveShifter::getBlockSize() const
 {
     return 512;

@@ -50,10 +50,18 @@
 #include <ipps.h>
 #endif
 
+#if defined(HAVE_FFTW3)
+#undef HAVE_FFTW3
+#endif
+// #define HAVE_FFTW3
 #ifdef HAVE_FFTW3
 #include <fftw3.h>
 #endif
 
+// #if defined(HAVE_SLEEF)
+// #undef HAVE_SLEEF
+// #endif
+#define HAVE_SLEEF
 #ifdef HAVE_SLEEF
 extern "C" {
 #include <sleef.h>
@@ -1669,7 +1677,7 @@ public:
         if (!m_fplanf) initFloat();
         packFloat(realIn, imagIn);
         if (isAligned(realOut)) {
-            SleefDFT_float_execute(m_dplani, 0, realOut);
+            SleefDFT_float_execute(m_fplani, 0, realOut);
         } else {
             SleefDFT_float_execute(m_fplani, 0, 0);
             v_copy(realOut, m_fbuf, m_size);
