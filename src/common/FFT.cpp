@@ -73,8 +73,10 @@ extern "C" {
 #include <Accelerate/Accelerate.h>
 #endif
 
+// #define HAVE_KISSFFT
 #ifdef HAVE_KISSFFT
-#include "kiss_fftr.h"
+#include "../../kissfft/kiss_fft.h"
+#include "../../kissfft/kiss_fftr.h"
 #endif
 
 #ifndef HAVE_IPP

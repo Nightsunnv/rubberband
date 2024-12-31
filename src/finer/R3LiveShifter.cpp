@@ -25,6 +25,8 @@
 
 #include "../common/VectorOpsComplex.h"
 #include "../common/Profiler.h"
+#include <chrono>
+#include <iostream>
 
 #include <array>
 
@@ -205,10 +207,10 @@ R3LiveShifter::createResamplers()
     Profiler profiler("R3LiveShifter::createResamplers");
     
     Resampler::Parameters resamplerParameters;
-    resamplerParameters.quality = Resampler::FastestTolerable;
+    resamplerParameters.quality = Resampler::Fastest;
     resamplerParameters.initialSampleRate = m_parameters.sampleRate;
     resamplerParameters.maxBufferSize = m_guideConfiguration.longestFftSize;
-    resamplerParameters.dynamism = Resampler::RatioOftenChanging;
+    resamplerParameters.dynamism = Resampler::RatioMostlyFixed;
     resamplerParameters.ratioChange = Resampler::SuddenRatioChange;
 
     int debug = m_log.getDebugLevel();
@@ -344,15 +346,24 @@ R3LiveShifter::shift(const float *const *input, float *const *output)
         for (int c = 0; c < m_parameters.channels; ++c) {
             m_channelData[c]->inbuf->zero(pad);
         }
-    }        
-    
+    }
+
+    std::chrono::steady_clock::time_point start = std::chrono::steady_clock::now();
     readIn(input);
+    std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
+    std::cout<<"Time taken for readIn: "<<std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count()<<std::endl;
 
     double outRatio = getOutRatio();
     int requiredInOutbuf = int(ceil(incount / outRatio));
+    start = std::chrono::steady_clock::now();
     generate(requiredInOutbuf);
-    
+    end = std::chrono::steady_clock::now();
+    std::cout<<"Time taken for generate: "<<std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count()<<std::endl;
+
+    start = std::chrono::steady_clock::now();
     int got = readOut(output, incount);
+    end = std::chrono::steady_clock::now();
+    std::cout<<"Time taken for readOut: "<<std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count()<<std::endl;
 
     if (got < incount) {
         m_log.log(0, "R3LiveShifter::shift: ERROR: internal error: insufficient data at output (wanted, got)", incount, got);
@@ -647,7 +658,7 @@ R3LiveShifter::readOut(float *const *output, int outcount)
              got,
              outRatio,
              false);
-
+        
         m_log.log(2, "R3LiveShifter::readOut: resampledHere", resampledHere);
 
         if (got == 0 && resampledHere == 0) {

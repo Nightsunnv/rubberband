@@ -43,6 +43,7 @@
 #endif
 #endif
 
+// #define HAVE_SAMPLERATE
 #ifdef HAVE_SAMPLERATE
 #define HAVE_LIBSAMPLERATE 1
 #endif

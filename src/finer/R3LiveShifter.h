@@ -403,7 +403,7 @@ protected:
         }
     }
     
-    __attribute__((noinline)) int getWindowSourceSize() const {
+    int getWindowSourceSize() const {
         if (m_useReadahead) {
             int sz = m_guideConfiguration.classificationFftSize +
                 m_limits.maxInhopWithReadahead;
