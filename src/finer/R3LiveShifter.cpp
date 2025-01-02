@@ -332,9 +332,9 @@ R3LiveShifter::shift(const float *const *input, float *const *output)
 
     int incount = int(getBlockSize());
     
-    m_log.log(2, "R3LiveShifter::shift: start of shift with incount", incount);
-    m_log.log(2, "R3LiveShifter::shift: initially in inbuf", m_channelData[0]->inbuf->getReadSpace());
-    m_log.log(2, "R3LiveShifter::shift: initially in outbuf", m_channelData[0]->outbuf->getReadSpace());
+    // m_log.log(2, "R3LiveShifter::shift: start of shift with incount", incount);
+    // m_log.log(2, "R3LiveShifter::shift: initially in inbuf", m_channelData[0]->inbuf->getReadSpace());
+    // m_log.log(2, "R3LiveShifter::shift: initially in outbuf", m_channelData[0]->outbuf->getReadSpace());
 
     int pad = 0;
     if (m_firstProcess) {
@@ -342,7 +342,7 @@ R3LiveShifter::shift(const float *const *input, float *const *output)
         if (m_pitchScale > 1.0) {
             pad = int(ceil(pad * m_pitchScale));
         }
-        m_log.log(2, "R3LiveShifter::shift: extending input with pre-pad", incount, pad);
+        // m_log.log(2, "R3LiveShifter::shift: extending input with pre-pad", incount, pad);
         for (int c = 0; c < m_parameters.channels; ++c) {
             m_channelData[c]->inbuf->zero(pad);
         }
@@ -351,22 +351,22 @@ R3LiveShifter::shift(const float *const *input, float *const *output)
     std::chrono::steady_clock::time_point start = std::chrono::steady_clock::now();
     readIn(input);
     std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
-    std::cout<<"Time taken for readIn: "<<std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count()<<std::endl;
+    // std::cout<<"Time taken for readIn: "<<std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count()<<std::endl;
 
     double outRatio = getOutRatio();
     int requiredInOutbuf = int(ceil(incount / outRatio));
     start = std::chrono::steady_clock::now();
     generate(requiredInOutbuf);
     end = std::chrono::steady_clock::now();
-    std::cout<<"Time taken for generate: "<<std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count()<<std::endl;
+    // std::cout<<"Time taken for generate: "<<std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count()<<std::endl;
 
     start = std::chrono::steady_clock::now();
     int got = readOut(output, incount);
     end = std::chrono::steady_clock::now();
-    std::cout<<"Time taken for readOut: "<<std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count()<<std::endl;
+    // std::cout<<"Time taken for readOut: "<<std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count()<<std::endl;
 
     if (got < incount) {
-        m_log.log(0, "R3LiveShifter::shift: ERROR: internal error: insufficient data at output (wanted, got)", incount, got);
+        // m_log.log(0, "R3LiveShifter::shift: ERROR: internal error: insufficient data at output (wanted, got)", incount, got);
         for (int c = 0; c < m_parameters.channels; ++c) {
             for (int i = got; i < incount; ++i) {
                 if (i > 0) output[c][i] = output[c][i-1] * 0.9f;
@@ -375,10 +375,10 @@ R3LiveShifter::shift(const float *const *input, float *const *output)
         }
     }
 
-    m_log.log(2, "R3LiveShifter::shift: end of process with incount", incount);
-    m_log.log(2, "R3LiveShifter::shift: remaining in inbuf", m_channelData[0]->inbuf->getReadSpace());
-    m_log.log(2, "R3LiveShifter::shift: remaining in outbuf", m_channelData[0]->outbuf->getReadSpace());
-    m_log.log(2, "R3LiveShifter::shift: returning", got);
+    // m_log.log(2, "R3LiveShifter::shift: end of process with incount", incount);
+    // m_log.log(2, "R3LiveShifter::shift: remaining in inbuf", m_channelData[0]->inbuf->getReadSpace());
+    // m_log.log(2, "R3LiveShifter::shift: remaining in outbuf", m_channelData[0]->outbuf->getReadSpace());
+    // m_log.log(2, "R3LiveShifter::shift: returning", got);
 
     m_firstProcess = false;
 }

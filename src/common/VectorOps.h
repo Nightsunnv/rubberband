@@ -43,6 +43,7 @@
 #endif
 
 #include <cstring>
+#include <algorithm>
 #include "sysutils.h"
 
 namespace RubberBand {
@@ -834,9 +835,10 @@ inline void v_fftshift(T *const R__ ptr,
 {
     const int hs = count/2;
     for (int i = 0; i < hs; ++i) {
-        T t = ptr[i];
-        ptr[i] = ptr[i + hs];
-        ptr[i + hs] = t;
+        // T t = ptr[i];
+        // ptr[i] = ptr[i + hs];
+        // ptr[i + hs] = t;
+        std::swap(ptr[i], ptr[i + hs]);
     }
 }
 
