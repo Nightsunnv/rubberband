@@ -322,7 +322,7 @@ R3LiveShifter::reset()
 constexpr size_t
 R3LiveShifter::getBlockSize() const
 {
-    return 128;
+    return 256;
 }
 
 void
