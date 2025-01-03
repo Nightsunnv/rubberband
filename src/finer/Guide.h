@@ -122,7 +122,7 @@ public:
         m_log.log(1, "Guide: rate and single-window mode",
                   rate, m_parameters.singleWindowMode);
 
-        int classificationFftSize = roundUpDiv(parameters.sampleRate, 32);
+        int classificationFftSize = roundUpDiv(parameters.sampleRate, 64);
 
         int minClassificationFftSize = 1024;
         if (classificationFftSize < minClassificationFftSize) {
