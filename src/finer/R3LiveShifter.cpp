@@ -322,7 +322,7 @@ R3LiveShifter::reset()
 constexpr size_t
 R3LiveShifter::getBlockSize() const
 {
-    return 256;
+    return 512;
 }
 
 void
@@ -390,7 +390,7 @@ R3LiveShifter::readIn(const float *const *input)
     
     int ws = m_channelData[0]->inbuf->getWriteSpace();
     if (ws < incount) {
-        m_log.log(0, "R3LiveShifter::process: ERROR: internal error: insufficient space in inbuf (wanted, got)", incount, ws);
+        // m_log.log(0, "R3LiveShifter::process: ERROR: internal error: insufficient space in inbuf (wanted, got)", incount, ws);
         return;
     }
         
@@ -419,7 +419,7 @@ R3LiveShifter::readIn(const float *const *input)
     }
     
     double inRatio = getInRatio();
-    m_log.log(2, "R3LiveShifter::readIn: ratio", inRatio);
+    // m_log.log(2, "R3LiveShifter::readIn: ratio", inRatio);
     
     int resampleBufSize = int(m_channelData.at(0)->resampled.size());
 
@@ -431,12 +431,12 @@ R3LiveShifter::readIn(const float *const *input)
          inRatio,
          false);
 
-    m_log.log(2, "R3LiveShifter::readIn: writing to inbuf from resampled data, former read space and samples being added", m_channelData[0]->inbuf->getReadSpace(), resampleOutput);
+    // m_log.log(2, "R3LiveShifter::readIn: writing to inbuf from resampled data, former read space and samples being added", m_channelData[0]->inbuf->getReadSpace(), resampleOutput);
 
     if (m_firstProcess) {
         int expected = floor(incount * inRatio);
         if (resampleOutput < expected) {
-            m_log.log(2, "R3LiveShifter::readIn: resampler left us short on first process, pre-padding output: expected and obtained", expected, resampleOutput);
+            // m_log.log(2, "R3LiveShifter::readIn: resampler left us short on first process, pre-padding output: expected and obtained", expected, resampleOutput);
             for (int c = 0; c < m_parameters.channels; ++c) {
                 m_channelData[c]->inbuf->zero(expected - resampleOutput);
             }
@@ -458,11 +458,11 @@ R3LiveShifter::generate(int requiredInOutbuf)
     auto &cd0 = m_channelData.at(0);
     int alreadyGenerated = cd0->outbuf->getReadSpace();
     if (alreadyGenerated >= requiredInOutbuf) {
-        m_log.log(2, "R3LiveShifter::generate: have already generated required count", alreadyGenerated, requiredInOutbuf);
+        // m_log.log(2, "R3LiveShifter::generate: have already generated required count", alreadyGenerated, requiredInOutbuf);
         return;
     }
 
-    m_log.log(2, "R3LiveShifter::generate: alreadyGenerated, requiredInOutbuf", alreadyGenerated, requiredInOutbuf);
+    // m_log.log(2, "R3LiveShifter::generate: alreadyGenerated, requiredInOutbuf", alreadyGenerated, requiredInOutbuf);
 
     int toGenerate = requiredInOutbuf - alreadyGenerated;
 
@@ -476,15 +476,15 @@ R3LiveShifter::generate(int requiredInOutbuf)
 
     int atInput = cd0->inbuf->getReadSpace();
     if (atInput <= ws) {
-        m_log.log(2, "R3LiveShifter::generate: insufficient samples at input: have and require more than", atInput, ws);
+        // m_log.log(2, "R3LiveShifter::generate: insufficient samples at input: have and require more than", atInput, ws);
         return;
     }
 
-    m_log.log(2, "R3LiveShifter::generate: atInput, toLeave", atInput, ws);
+    // m_log.log(2, "R3LiveShifter::generate: atInput, toLeave", atInput, ws);
 
     int toConsume = atInput - ws;
 
-    m_log.log(2, "R3LiveShifter::generate: toConsume, toGenerate", toConsume, toGenerate);
+    // m_log.log(2, "R3LiveShifter::generate: toConsume, toGenerate", toConsume, toGenerate);
 
     int indicativeInhop = m_limits.maxInhopWithReadahead;
     int indicativeOuthop = m_limits.maxPreferredOuthop;
@@ -494,16 +494,16 @@ R3LiveShifter::generate(int requiredInOutbuf)
     
     int hops = std::max(minHopsAtInput, minHopsAtOutput);
 
-    m_log.log(2, "R3LiveShifter::generate: indicative inhop, outhop", indicativeInhop, indicativeOuthop);
-    m_log.log(2, "R3LiveShifter::generate: minHopsAtInput, minHopsAtOutput", minHopsAtInput, minHopsAtOutput);
-    m_log.log(2, "R3LiveShifter::generate: hops", hops);
+    // m_log.log(2, "R3LiveShifter::generate: indicative inhop, outhop", indicativeInhop, indicativeOuthop);
+    // m_log.log(2, "R3LiveShifter::generate: minHopsAtInput, minHopsAtOutput", minHopsAtInput, minHopsAtOutput);
+    // m_log.log(2, "R3LiveShifter::generate: hops", hops);
 
     for (int hop = 0; hop < hops; ++hop) {
 
         Profiler profiler2("R3LiveShifter::generate/loop");
 
         if (toConsume <= 0) {
-            m_log.log(2, "R3LiveShifter::generate: ERROR: toConsume is zero at top of loop, hop and hops", hop, hops);
+            // m_log.log(2, "R3LiveShifter::generate: ERROR: toConsume is zero at top of loop, hop and hops", hop, hops);
             break;
         }
         
@@ -528,13 +528,13 @@ R3LiveShifter::generate(int requiredInOutbuf)
         // they use the m_prev values.
 
         if (inhop != m_prevInhop) {
-            m_log.log(2, "R3LiveShifter::generate: change in inhop", m_prevInhop, inhop);
+            // m_log.log(2, "R3LiveShifter::generate: change in inhop", m_prevInhop, inhop);
         }
         if (outhop != m_prevOuthop) {
-            m_log.log(2, "R3LiveShifter::generate: change in outhop", m_prevOuthop, outhop);
+            // m_log.log(2, "R3LiveShifter::generate: change in outhop", m_prevOuthop, outhop);
         }
         
-        m_log.log(2, "R3LiveShifter::generate: write space and outhop", cd0->outbuf->getWriteSpace(), outhop);
+        // m_log.log(2, "R3LiveShifter::generate: write space and outhop", cd0->outbuf->getWriteSpace(), outhop);
 
         // NB our ChannelData, ScaleData, and ChannelScaleData maps
         // contain shared_ptrs; whenever we retain one of them in a
@@ -594,20 +594,20 @@ R3LiveShifter::generate(int requiredInOutbuf)
             cd->inbuf->skip(advanceCount);
         }
 
-        m_log.log(2, "R3LiveShifter::generate: writing and advancing", writeCount, advanceCount);
+        // m_log.log(2, "R3LiveShifter::generate: writing and advancing", writeCount, advanceCount);
 
         m_prevInhop = inhop;
         m_prevOuthop = outhop;
     }
 
-    m_log.log(2, "R3LiveShifter::generate: returning, now have generated", cd0->outbuf->getReadSpace());
+    // m_log.log(2, "R3LiveShifter::generate: returning, now have generated", cd0->outbuf->getReadSpace());
 }
 
 int
 R3LiveShifter::readOut(float *const *output, int outcount)
 {
     double outRatio = getOutRatio();
-    m_log.log(2, "R3LiveShifter::readOut: outcount and ratio", outcount, outRatio);
+    // m_log.log(2, "R3LiveShifter::readOut: outcount and ratio", outcount, outRatio);
 
     int resampledCount = 0;
     bool fillingTail = false;
@@ -625,7 +625,7 @@ R3LiveShifter::readOut(float *const *output, int outcount)
             }
         }
         
-        m_log.log(2, "R3LiveShifter::readOut: fillingTail and fromOutbuf", fillingTail, fromOutbuf);
+        // m_log.log(2, "R3LiveShifter::readOut: fillingTail and fromOutbuf", fillingTail, fromOutbuf);
 
         int got = fromOutbuf;
     
@@ -636,14 +636,14 @@ R3LiveShifter::readOut(float *const *output, int outcount)
                 (cd->resampled.data(), std::min(got, available));
             if (gotHere < got) {
                 if (c > 0) {
-                    m_log.log(0, "R3LiveShifter::readOut: WARNING: channel imbalance detected");
+                    // m_log.log(0, "R3LiveShifter::readOut: WARNING: channel imbalance detected");
                 }
             }
             got = std::min(got, std::max(gotHere, 0));
         }
 
-        m_log.log(2, "R3LiveShifter::readOut: requested and got from outbufs", fromOutbuf, got);
-        m_log.log(2, "R3LiveShifter::readOut: leaving behind", m_channelData.at(0)->outbuf->getReadSpace());
+        // m_log.log(2, "R3LiveShifter::readOut: requested and got from outbufs", fromOutbuf, got);
+        // m_log.log(2, "R3LiveShifter::readOut: leaving behind", m_channelData.at(0)->outbuf->getReadSpace());
 
         for (int c = 0; c < m_parameters.channels; ++c) {
             auto &cd = m_channelData.at(c);
@@ -659,10 +659,10 @@ R3LiveShifter::readOut(float *const *output, int outcount)
              outRatio,
              false);
         
-        m_log.log(2, "R3LiveShifter::readOut: resampledHere", resampledHere);
+        // m_log.log(2, "R3LiveShifter::readOut: resampledHere", resampledHere);
 
         if (got == 0 && resampledHere == 0) {
-            m_log.log(2, "R3LiveShifter::readOut: made no progress, finishing");
+            // m_log.log(2, "R3LiveShifter::readOut: made no progress, finishing");
             break;
         }            
         
@@ -682,11 +682,11 @@ R3LiveShifter::readOut(float *const *output, int outcount)
         }
     }
 
-    m_log.log(2, "R3LiveShifter::readOut: resampled to", resampledCount);
+    // m_log.log(2, "R3LiveShifter::readOut: resampled to", resampledCount);
 
     if (resampledCount < outcount) {
         if (m_firstProcess) {
-            m_log.log(2, "R3LiveShifter::readOut: resampler left us short on first process, pre-padding output: expected and obtained", outcount, resampledCount);
+            // m_log.log(2, "R3LiveShifter::readOut: resampler left us short on first process, pre-padding output: expected and obtained", outcount, resampledCount);
             int prepad = outcount - resampledCount;
             for (int c = 0; c < m_parameters.channels; ++c) {
                 v_move(output[c] + prepad, output[c], resampledCount);
@@ -694,11 +694,11 @@ R3LiveShifter::readOut(float *const *output, int outcount)
             }
             resampledCount = outcount;
         } else {
-            m_log.log(0, "R3LiveShifter::readOut: WARNING: Failed to obtain enough samples from resampler", resampledCount, outcount);
+            // m_log.log(0, "R3LiveShifter::readOut: WARNING: Failed to obtain enough samples from resampler", resampledCount, outcount);
         }
     }
 
-    m_log.log(2, "R3LiveShifter::readOut: returning", resampledCount);
+    // m_log.log(2, "R3LiveShifter::readOut: returning", resampledCount);
     
     return resampledCount;
 }
