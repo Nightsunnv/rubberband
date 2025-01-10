@@ -25,7 +25,7 @@
 #define RUBBERBAND_PHASE_ADVANCE_H
 
 #include "Guide.h"
-
+#include "Peak.h"
 #include "../common/Log.h"
 #include "../common/mathmisc.h"
 #include "../common/Profiler.h"

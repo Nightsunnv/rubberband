@@ -136,10 +136,10 @@ WindowType
 R3LiveShifter::ScaleData::analysisWindowShape()
 {
     if (singleWindowMode) {
-        return HannWindow;
+        return BartlettWindow;
     } else {
         if (fftSize < 1024 || fftSize > 2048) return HannWindow;
-        else return NiemitaloForwardWindow;
+        else return HannWindow;//NiemitaloForwardWindow;
     }
 }
 
@@ -153,10 +153,10 @@ WindowType
 R3LiveShifter::ScaleData::synthesisWindowShape()
 {
     if (singleWindowMode) {
-        return HannWindow;
+        return BartlettWindow;
     } else {
         if (fftSize < 1024 || fftSize > 2048) return HannWindow;
-        else return NiemitaloReverseWindow;
+        else return HannWindow;//NiemitaloReverseWindow;
     }
 }
 

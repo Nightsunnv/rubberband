@@ -26,13 +26,11 @@
 
 #include "BinSegmenter.h"
 #include "Guide.h"
-#include "Peak.h"
 #include "PhaseAdvance.h"
 
 #include "../common/Resampler.h"
 #include "../common/FFT.h"
 #include "../common/FixedVector.h"
-#include "../common/Allocators.h"
 #include "../common/Window.h"
 #include "../common/VectorOpsComplex.h"
 #include "../common/Log.h"
